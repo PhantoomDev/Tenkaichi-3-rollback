@@ -20,6 +20,8 @@ Basic C programming knowledge is required. While you don't need to be an expert,
 - Functions
 - Pointers
 
+Basic assembly knowledge is required when debugging the game's instructions.
+
 ## Required Software
 
 (Feel free to download them as you go along, as some steps might not be needed)
