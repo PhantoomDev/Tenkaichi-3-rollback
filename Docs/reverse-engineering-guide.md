@@ -252,5 +252,4 @@ The reverse engineering process combines three main tools:
       - if somewhere down the line I got lost in the huge pile of code.
    - At this point I'm going to be looking at Ghidra's decompilation window from time to time to make things easier for me, I can simply copy the address of the current Processing Cycle address find the same code address in Ghidra.
       - In Ghidra by pressing the **G** key we can bring up a search that can take us directly to an address instead of scrolling up and down.
-
    - With any luck, I could simply look at the decompiled code and hopefully intuit what the code does.
