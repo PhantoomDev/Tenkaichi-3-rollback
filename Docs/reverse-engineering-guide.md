@@ -248,8 +248,21 @@ The reverse engineering process combines three main tools:
 6. **Following the code**
    - At certain points I will have to simply follow the instruction path and not just using "Step" or repeatedly "Pause" and "Play" since eventually it will be a bit too luck based.
    - For this scenario I will attempt to follow the original 3 instruction loop and see what happens from there and record as many memory address that gets read or written until I either:
-      - circle back to a loop (a safe assumption to make since in this situation in some way the Processing Cycle always returns back to the `8021ADC` processing address) or
+      - circle back to a loop (a safe assumption to make since in this situation in some way the Processing Cycle always returns back to the `8021ADC`, processing address) or
+      - I recorded enough memory address that I can try to see the changes in the memory engine again, or
       - if somewhere down the line I got lost in the huge pile of code.
    - At this point I'm going to be looking at Ghidra's decompilation window from time to time to make things easier for me, I can simply copy the address of the current Processing Cycle address find the same code address in Ghidra.
       - In Ghidra by pressing the **G** key we can bring up a search that can take us directly to an address instead of scrolling up and down.
+      ![Ghidra-search](/Docs/images/reverse-engineering/example-workflow/ghidra-search.png)
    - With any luck, I could simply look at the decompiled code and hopefully intuit what the code does.
+   > **Warning:** Do not change any values in Ghidra. If you see some incorrectly interpreted values as shown before, do not change it. Ignore it for now and only use Ghidra as a tool to see if there are anything you can recognize in the code in terms of logic.
+   - So I'm currently in some kind of hardware syncing process, so looking at the decompiled code here probably isn't that helpful, let's instead follow the code in Dolphin debug mode and record any memory address we find.
+   - Here we can see outside of the loop `beq+  ->0x80210ADC` we have an instruction `bl	->0x8020DD78` that takes us quite far into the game's code, in fact the immediate after portion of this code also could leads into somewhere quite close to that location `bl	->0x8020DD8C` (after jumping  back from `beq+	 ->0x80210AD8`)
+
+      ![dolphin-branch-0x8020DD78](/Docs/images/reverse-engineering/example-workflow/dolphin-branch-0x8020DD78.png)
+
+      - also there doesn't seem to be anything else that looks like it's worth watching so nothing to add to the memory watch list.
+
+   - Let's check out what's in `0x8020DD78`, simply right-click and select `follow branch` to begin the adventure.
+   
+      ![dolphin-0x8020DD78](/Docs/images/reverse-engineering/example-workflow/dolphin-0x8020DD78.png)
