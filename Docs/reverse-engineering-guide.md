@@ -265,4 +265,58 @@ The reverse engineering process combines three main tools:
 
    - Let's check out what's in `0x8020DD78`, simply right-click and select `follow branch` to begin the adventure.
    
+      > **Important:** Keep note on where you were before you `follow branch`, if the branch ends in a return instruction (`blr`) then you'll have to backtrack.
+ 
       ![dolphin-0x8020DD78](/Docs/images/reverse-engineering/example-workflow/dolphin-0x8020DD78.png)
+
+   - And it's another hardware system check protocol section
+      - `blr` here are basically return calls.
+      - there are also a bunch of `msr` (Machine State Register) related instructions 
+      > frequently ask ChatGPT and most of the time the answers will give a few easy hints on what's happening
+      ```
+      8020dd78 mfmsr r3          # Read current MSR value into r3
+      8020dd7c rlwinm r4,r3,0,17,15  # Rotate left and mask: clear bit 16 (0x8000) in r3, store in r4
+      8020dd80 mtmsr r4          # Write modified value back to MSR
+      8020dd84 rlwinm r3,r3,17,31,31 # Extract original bit 16 state into r3
+      8020dd88 blr               # Branch to Link Register (return)
+
+      8020dd8c mfmsr r3          # Read MSR into r3 again
+      8020dd90 ori r4,r3,0x8000  # Set bit 16 (OR with 0x8000)
+      8020dd94 mtmsr r4          # Write modified value back to MSR
+      8020dd98 rlwinm r3,r3,17,31,31 # Extract original bit 16 state
+      8020dd9c blr               # Return
+      ```
+   - Since these are hardware system related stuff and they just return, time to backtrack.
+      ![dolphin-branch-0x8020DD78](/Docs/images/reverse-engineering/example-workflow/dolphin-branch-0x8020DD78.png)
+   - Looking at it now it's becoming clear that this is some instruction loop that would check for hardware flags that would then trigger some operations with `msr`.
+   - Time to continue. Since `beq+  ->0x80210AD8` ultimately results into the second function `8020dd8c`, we will start from `80210af8  lis	r3, 0x8056`
+      ```
+         80210af8 lis r3, 0x8056      # Load Immediate Shifted: loads 0x8056 into upper 16 bits of r3
+         80210afc subi r3, r3, 24144   # Subtract Immediate: subtracts 24144 from r3
+         80210b00 bl ->0x80209F64      # Branch and Link to that address
+      ```
+      ![dolphin-0x8209F64](/Docs/images/reverse-engineering/example-workflow/dolphin-0x8209F64.png)
+
+   - More instruction
+      ```
+         80209f64 li     r5, 0        # Load Immediate: sets r5 to 0
+         80209f68 lis    r4, 0x8000   # Load Immediate Shifted: loads 0x8000 into upper 16 bits of r4
+         80209f6c ath    r5, 0x01A0   # Add to High: adds 0x01A0 to r5
+         80209f70 ath    r5, 0x01A2   # Add to High: adds another 0x01A2 to r5
+         80209f74 lwz    r0, 0x00D8   # Load Word and Zero: loads from offset 0xD8 into r0
+         80209f78 cmplw  r3, r0       # Compare Logical: compares r3 with r0
+         80209f7c bnelr-             # Branch Not Equal and Link Register: returns if not equal
+         80209f80 stw    r5, 0x00D8   # Store Word: stores r5 to offset 0xD8
+         80209f84 blr                 # Branch Link Register: return
+      ```
+   - This looks like a validation or comparison function that:
+      1. Sets up some values in r4 and r5 through a series of loads and adds
+      2. Loads a value from memory (0xD8) into r0
+      3. Compares that with the input parameter that was in r3
+      4. Returns immediately if they're not equal (bnelr)
+      5. If they are equal, stores some values to memory before returning
+      - The function appears to be doing some kind of check or validation, possibly related to memory addresses or system state, since it's working with the high memory address range (0x8000xxxx).
+   - I'll note put that memory address in the watch list. It's probably nothing game logic related again but still.
+   - Since things have still been revolving around hardware system checking and validations, I'll skip over these parts until something exciting shows up.
+
+7. **Something interesting**
