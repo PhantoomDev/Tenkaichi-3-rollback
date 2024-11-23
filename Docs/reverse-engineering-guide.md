@@ -168,11 +168,13 @@ The reverse engineering process combines three main tools:
 !!! Will be continuing the document, currently making example by watching memory address in main menu to figure out: menu functions, target menu pointer address and hopefully some input handler function
 
 ### Example Workflow (In Progress)
+> **Note**: You can do these things out of order, it depends on what you do. This example actually shows me failing a few times and switching methods as I go along. I recommend to first read through this section before following anything in this part
 
 1. **Planning Phase**
    - Plan what you want to do. Going in without having an idea about what you’re trying to do will not yield any result.
    - For this example I plan to figure out the code of the main menu, specifically some form of target menu address pointer. Obviously the game has to store which menu I want to enter, I can most likely assume that moving the selection up and down in the main menu will change some kind of value to indicate that. I’ll be looking for that.
    - Once I figure that out it should be much easier to figure out where everything is, since we will know at the very least which part of the instruction code corresponds to the menu of that mode.
+   - If needed, use Ghidra's help to slightly brute force some function
 
 2. **Save State Preparation**
    Create a save state at the main menu for quick testing
@@ -332,4 +334,6 @@ The reverse engineering process combines three main tools:
 
 > - **Tip**: For potentially dynamic memory, if you're lazy you could simply add a breakpoint to that instruction address when it makes a comparison.
 
-8. **Something interesting**
+8. **Brute force**
+
+Self reminder before sleep: 80008d10
