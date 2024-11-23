@@ -297,17 +297,17 @@ The reverse engineering process combines three main tools:
       ```
       ![dolphin-0x8209F64](/Docs/images/reverse-engineering/example-workflow/dolphin-0x8209F64.png)
 
-   - More instruction
+   - More instructions
       ```
-         80209f64 li     r5, 0        # Load Immediate: sets r5 to 0
-         80209f68 lis    r4, 0x8000   # Load Immediate Shifted: loads 0x8000 into upper 16 bits of r4
-         80209f6c ath    r5, 0x01A0   # Add to High: adds 0x01A0 to r5
-         80209f70 ath    r5, 0x01A2   # Add to High: adds another 0x01A2 to r5
-         80209f74 lwz    r0, 0x00D8   # Load Word and Zero: loads from offset 0xD8 into r0
-         80209f78 cmplw  r3, r0       # Compare Logical: compares r3 with r0
-         80209f7c bnelr-             # Branch Not Equal and Link Register: returns if not equal
-         80209f80 stw    r5, 0x00D8   # Store Word: stores r5 to offset 0xD8
-         80209f84 blr                 # Branch Link Register: return
+         80209f64 li     r5, 0         # Load Immediate: sets r5 to 0
+         80209f68 lis    r4, 0x8000    # Load Immediate Shifted: loads 0x8000 into upper 16 bits of r4
+         80209f6c ath    r5, 0x01A0 (r3)  # Add to High: adds 0x01A0 to r5, indexed by r3
+         80209f70 ath    r5, 0x01A2 (r3)  # Add to High: adds 0x01A2 to r5, indexed by r3
+         80209f74 lwz    r0, 0x00D8 (r4)  # Load Word and Zero: loads from r4+0xD8 into r0
+         80209f78 cmplw  r3, r0        # Compare Logical: compares r3 with r0
+         80209f7c bnelr-              # Branch Not Equal and Link Register: returns if not equal
+         80209f80 stw    r5, 0x00D8 (r4)  # Store Word: stores r5 to r4+0xD8
+         80209f84 blr                  # Branch Link Register: return
       ```
    - This looks like a validation or comparison function that:
       1. Sets up some values in r4 and r5 through a series of loads and adds
@@ -316,7 +316,13 @@ The reverse engineering process combines three main tools:
       4. Returns immediately if they're not equal (bnelr)
       5. If they are equal, stores some values to memory before returning
       - The function appears to be doing some kind of check or validation, possibly related to memory addresses or system state, since it's working with the high memory address range (0x8000xxxx).
-   - I'll note put that memory address in the watch list. It's probably nothing game logic related again but still.
+   - There are also a few memory address that are being compared here, I'll put that memory address in the watch list. It's probably nothing game logic related again but will still add for completion sake, might come in handy who knows.
+      - These memory addresses are relative to the register, so some of them can't be assumed to be static.
+      - But in this case we can know for sure the r3 and r4 values are fixed since the previous instructions all set them to a fixed value through `lis` and the sorts
+      - On `80209f74 lwz   r0, 0x00D8 (r4)`, the location will always be `0x800000D8` (adding to the memory watch list)
+      - On `80209f78 cmplw r3, r0`, r3 will always be `0x8055A1B0` (adding to memory watch list)
+      - First ath: memory at `0x8055A1B0 + 0x01A0 = 0x8055A350` 
+      - Second ath: memory at `0x8055A1B0 + 0x01A2 = 0x8055A352`
    - Since things have still been revolving around hardware system checking and validations, I'll skip over these parts until something exciting shows up.
 
 7. **Something interesting**
