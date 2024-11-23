@@ -245,7 +245,12 @@ The reverse engineering process combines three main tools:
    - For the sake of not having to keep relabeling memory and easily check through different section of the game, we can save the current watch list as a file and later open them under `File > Save` or `File > Open`.
    - Save and open this file under [this directory](/DMW/) and follow the [labeling-rule](/DMW/label-rule.md) for easy understanding.
 
-6. **Following the code**
+6. **The Lazy way (Not working for me)**
+   - Dolphin memory engine has a scan function that can check if a value has changed in memory (those who use cheat engine know what I mean)
+   - You can set the first scan to any initial value and make changes or not make changes to the current game state and continue to do followup scans to retain or remove memory that's changed or unchanged.
+   - I  tried to look for menu address pointer with this method by changing selection in main menu, didn't work. I don't know why
+
+7. **Following the code**
    - At certain points I will have to simply follow the instruction path and not just using "Step" or repeatedly "Pause" and "Play" since eventually it will be a bit too luck based.
    - For this scenario I will attempt to follow the original 3 instruction loop and see what happens from there and record as many memory address that gets read or written until I either:
       - circle back to a loop (a safe assumption to make since in this situation in some way the Processing Cycle always returns back to the `8021ADC`, processing address) or
@@ -325,4 +330,6 @@ The reverse engineering process combines three main tools:
       - Second ath: memory at `0x8055A1B0 + 0x01A2 = 0x8055A352`
    - Since things have still been revolving around hardware system checking and validations, I'll skip over these parts until something exciting shows up.
 
-7. **Something interesting**
+> - **Tip**: For potentially dynamic memory, if you're lazy you could simply add a breakpoint to that instruction address when it makes a comparison.
+
+8. **Something interesting**
