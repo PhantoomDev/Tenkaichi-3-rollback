@@ -383,5 +383,6 @@ The reverse engineering process combines three main tools:
 
          ![ghidra-rename-function-signature-clamp](/Docs/images/reverse-engineering/example-workflow/ghidra-rename-function-signature-clamp.png)
 
-      > Note: Again, don't forget to save the ghidra project the way shown above
+      > Note: Again, don't forget to save the ghidra project the way shown on top.
+
    - Continue to the next function
