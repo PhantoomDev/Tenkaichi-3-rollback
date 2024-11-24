@@ -230,12 +230,12 @@ The reverse engineering process combines three main tools:
    - > Considering the game did in fact run and I can move in the menu, it is impossible that the loop goes on forever and the value is actually 0. It's just that I couldn't see the changes.
    - Something new happened:
    ![Hope input buffer](images/reverse-engineering/example-workflow/new-situation-code.png)
-   - New hypothesis: The memory in `0x8062ADC8` is changing really fast that the polling rate of the memory didn't catch it.
-   - The memory engine have different update rates set, one for watcher displaying it on the engine menu, one for the actual memory browser scanner.
+   - New hypothesis: The memory in `0x8062ADC8` is changing but not on the right part.
+   - Instead of byte i should have put a bigger range like 4 byte (word).
    - Right-click the watched value, I can select "Browse memory at this address"
       - This window should show up
       ![Hope input buffer](images/reverse-engineering/example-workflow/memory-viewer-80.png)
-   - Immediately I noticed something: Since this window  updates the scanned value faster (changes highlighted in red) I can actually see that `0x8062ADC8`'s value actually did change, very fast and it does change.
+   - Immediately I noticed something: Since this window  updates the scanned value faster (changes highlighted in red) I can actually see that `0x8062ADC8`'s value actually did change, but only as a 4 byte data.
       - from `0x0` to `0x80`, which is actually a very important value, `0x80` is 128 in decimal.
    - It's a value switching between 0 and 128 (0x80) that's being repeatedly checked in a loop, this is most likely a semaphore or flag being used for synchronization!
    - Actually, with the help of ChatGPT and cross referencing with Wii documentation: a memory address in the `0x806xxxxx` range on the Wii, that's typically in the operating system/IOS memory range.

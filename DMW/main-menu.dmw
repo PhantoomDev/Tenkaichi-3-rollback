@@ -4,35 +4,14 @@
             "address": "8062ADC8",
             "baseIndex": 0,
             "label": "??IOS_SyncFlag_80_0",
-            "typeIndex": 0,
+            "typeIndex": 2,
             "unsigned": false
         },
         {
-            "address": "800000D8",
+            "address": "8062ACE4",
             "baseIndex": 0,
-            "label": "No label",
-            "typeIndex": 0,
-            "unsigned": false
-        },
-        {
-            "address": "8055A1B0",
-            "baseIndex": 0,
-            "label": "No label",
-            "typeIndex": 0,
-            "unsigned": false
-        },
-        {
-            "address": "8055A350",
-            "baseIndex": 0,
-            "label": "No label",
-            "typeIndex": 0,
-            "unsigned": false
-        },
-        {
-            "address": "8055A352",
-            "baseIndex": 0,
-            "label": "No label",
-            "typeIndex": 0,
+            "label": "??Menu_Transition_SyncFlag",
+            "typeIndex": 2,
             "unsigned": false
         }
     ]
