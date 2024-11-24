@@ -245,7 +245,7 @@ The reverse engineering process combines three main tools:
 5. **Dolphin Memory Watch File**
    - Dolphin memory engine has a way to open and save memory address watch list.
    - For the sake of not having to keep relabeling memory and easily check through different section of the game, we can save the current watch list as a file and later open them under `File > Save` or `File > Open`.
-   - Save and open this file under **[this directory](/DMW/)** and follow the **[labeling-rule](/DMW/label-rule.md)** for easy understanding.
+   - Save and open this file under **[this directory](/DMW/)** and follow the **[labeling-rule](/Docs/label-rule.md)** for easy understanding.
 
 6. **The Lazy way (Not working for me)**
    - Dolphin memory engine has a scan function that can check if a value has changed in memory (those who use cheat engine know what I mean)
@@ -371,8 +371,17 @@ The reverse engineering process combines three main tools:
          ![ghidra-potential-input-handler](/Docs/images/reverse-engineering/example-workflow/ghidra-potential-input-handler.png)
 
       - This could be an input handler, but just in case I'll test and see what else triggers the breakpoint.
-      - The breakpoint didn't trigger when I pressed X in attempt to enter a menu - So not an input handler, or at least not a full input handler.
+      - The breakpoint didn't trigger when I press left or right or pressed X in attempt to enter a menu - So not an input handler, or at least not a full input handler.
       - The breakpoint triggered immediately after the submenu loads in (specifically exactly after the transition is finished), the up and down movement in that submenu and when I try to exit the submenu, when the main menu is loaded.
       - This seems like a menu transition handler function.
    - Time to record and watch any memory address this function read and write to and what it compares to, if we can figure out what these memory mean we can slowly understand more clearly what this function does.
       > - **Note**: Make sure to check the memory address is not dynamic by either checking the address by stepping and confirming the target address twice per attempt or if you can see that the registers that are used for the position of memory address is indeed static for that portion from the code (e.g `li`).
+   - After analysis, it's another dud, this is most likely a float value clamping function (keeping a value within certain bounds as to not crash the system)
+      - the memory added to watch are show values like `-32`, `-128` and the likes
+      - looking at the decompiled C code one can also surmise that this doesn't actually contain any logic but instead some basic float operation loops without any conditions
+      - Since it seems pretty sure what this is with the float operation and whatnot I will label the function "?menu_transition_val_clamp". (right-click the function and select `"Edit Function Signature"`)
+
+         ![ghidra-rename-function-signature-clapm](/Docs/images/reverse-engineering/example-workflow/ghidra-rename-function-signature-clapm.png)
+
+      > Note: Again, don't forget to save the ghidra project the way shown above
+   - Continue to the next function
