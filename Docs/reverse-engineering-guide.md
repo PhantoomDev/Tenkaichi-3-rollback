@@ -245,7 +245,7 @@ The reverse engineering process combines three main tools:
 5. **Dolphin Memory Watch File**
    - Dolphin memory engine has a way to open and save memory address watch list.
    - For the sake of not having to keep relabeling memory and easily check through different section of the game, we can save the current watch list as a file and later open them under `File > Save` or `File > Open`.
-   - Save and open this file under [this directory](/DMW/) and follow the [labeling-rule](/DMW/label-rule.md) for easy understanding.
+   - Save and open this file under **[this directory](/DMW/)** and follow the **[labeling-rule](/DMW/label-rule.md)** for easy understanding.
 
 6. **The Lazy way (Not working for me)**
    - Dolphin memory engine has a scan function that can check if a value has changed in memory (those who use cheat engine know what I mean)
@@ -334,6 +334,45 @@ The reverse engineering process combines three main tools:
 
 > - **Tip**: For potentially dynamic memory, if you're lazy you could simply add a breakpoint to that instruction address when it makes a comparison.
 
-8. **Brute force**
+8. **Brute force function break point**
 
-Self reminder before sleep: 80008d10
+   - I got lost 3 branches in.
+      - Fortunately I found a few memory address that the instructions were using to compare for something.
+      - Unfortunately they are 0 or 128 values, meaning they are in fact simply some sort of hardware sync flag. Not useful
+
+         ![memory-engine-useless](/Docs/images/reverse-engineering/example-workflow/memory-engine-useless.png)
+   - Let's try another approach, my favorite - Brute force
+      - Anyone with half a brain cell in programming understands that brute forcing anything is generally a bad idea, thats why we need to have some way of narrowing our range of brute forcing.
+      - Thankfully we do have that narrower range - the Ghidra project (it might have missed some part, but it is a good starting point).
+   - The Ghidra project opened from **[here](/Ghidra/)** actually shows these automatically recognized and decompiled functions
+      
+      ![ghidra-function-folder](/Docs/images/reverse-engineering/example-workflow/ghidra-function-folder.png)
+
+      - The list of functions in the folder on the left, the corresponding assembly instructions in the middle and the corresponding  decompiled C code on the right.
+   - Here we can actually see a bit better on what's potentially going on (still really hard but better than just reading assembly instructions).
+      - At this point we could select every function on the left and look at the code on the right one by one and hope to see some kind of hint of game logic.
+      - Or I could do it the simple way of just using breakpoints.
+   - Since Ghidra actually shows where each of these function's instruction address lie, we can use those address to create breakpoint in Dolphin's debug mode.
+      - Create a new breakpoint like so (select "New")
+
+         ![dolphin-breakpoint](/Docs/images/reverse-engineering/example-workflow/dolphin-breakpoint.png)
+
+   - After the break point is added, I can resume the game and do some action I want to test.
+      - If the game goes reaches the breakpoint the game will pause automatically, telling me that the section of the code interacts with whatever action I just did.
+      - If the game doesn't pause it means the code has nothing to do with what I am doing and we can go to the next function and try again (Make sure to clear the breakpoints and testing this out one by one).
+   - Since I'm still trying to figure out the main menu related code I'll try to find out what code actually triggers the breakpoint when press the d-pad up and down.
+   - After a few function breakpoints I got a hit:
+
+      ![Main Menu](images/reverse-engineering/example-workflow/main-menu.png)
+      
+      - The breakpoint I placed on the instruction address `0x80008d10` triggered and paused the emulation when I pressed down on the d-pad
+      - After I resume the game it resumed.
+
+         ![ghidra-potential-input-handler](/Docs/images/reverse-engineering/example-workflow/ghidra-potential-input-handler.png)
+
+      - This could be an input handler, but just in case I'll test and see what else triggers the breakpoint.
+      - The breakpoint didn't trigger when I pressed X in attempt to enter a menu - So not an input handler, or at least not a full input handler.
+      - The breakpoint triggered immediately after the submenu loads in (specifically exactly after the transition is finished), the up and down movement in that submenu and when I try to exit the submenu, when the main menu is loaded.
+      - This seems like a menu transition handler function.
+   - Time to record and watch any memory address this function read and write to and what it compares to, if we can figure out what these memory mean we can slowly understand more clearly what this function does.
+      > - **Note**: Make sure to check the memory address is not dynamic by either checking the address by stepping and confirming the target address twice per attempt or if you can see that the registers that are used for the position of memory address is indeed static for that portion from the code (e.g `li`).
