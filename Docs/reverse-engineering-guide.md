@@ -381,7 +381,7 @@ The reverse engineering process combines three main tools:
       - looking at the decompiled C code one can also surmise that this doesn't actually contain any logic but instead some basic float operation loops without any conditions
       - Since it seems pretty sure what this is with the float operation and whatnot I will label the function "?menu_transition_val_clamp". (right-click the function and select `"Edit Function Signature"`)
 
-         ![ghidra-rename-function-signature-clapm](/Docs/images/reverse-engineering/example-workflow/ghidra-rename-function-signature-clapm.png)
+         ![ghidra-rename-function-signature-clamp](/Docs/images/reverse-engineering/example-workflow/ghidra-rename-function-signature-clamp.png)
 
       > Note: Again, don't forget to save the ghidra project the way shown above
    - Continue to the next function
