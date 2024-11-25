@@ -63,7 +63,7 @@ BT3 Wii uses PowerPC Gekko assembly language, which was standard for GameCube sy
 
    - Ghidra doesn't include Wii language decompilation by default, you need to get it [here](https://github.com/Cuyler36/Ghidra-GameCube-Loader/releases). Do not follow any of the instructions in the repo, (it's a lie and it will cost you precious time) instead, download the .zip file and move it under `Extension/Ghidra/` with all the other .zip extensions that came in by default.
 
-   - Once you do that, you can install that extension (don't worry about it being red) and you will have this option when importing the .dol file.
+   - Once you do that, you can install that extension and you will have this option when importing the .dol file.
 
       ![Ghidra Extension](images/reverse-engineering/getting-started/ghidra-extension.png)
 
@@ -386,3 +386,6 @@ The reverse engineering process combines three main tools:
       > Note: Again, don't forget to save the ghidra project the way shown on top.
 
    - Continue to the next function
+
+9. **Finding something**
+   - And now we try
