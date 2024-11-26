@@ -1,4 +1,4 @@
-# Dragon Ball Z: Budokai Tenkaichi 3 Rollback Netcode Implementation
+# Dragon Ball Z: Budokai Tenkaichi 3 Reverse-engineering (Rollback Netcode Implementation)
 
 ## Overview
 This repository works in tandem with a [modded Dolphin emulator repo](https://github.com/dolphin-emu/dolphin) to implement rollback netcode for Dragon Ball Z: Budokai Tenkaichi 3 (BT3) through reverse engineering. 
