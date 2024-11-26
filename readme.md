@@ -46,7 +46,7 @@ The goal is to learn and grow together. Not everyone starts as an expert documen
 
 ### Game Modifications
 - Utilizing unused "Dragon Net Battle" section as entry point for code injection
-- Implementing custom interface for netplay battle
+- Implementing interface for netplay battle (duel interface with rollback hooks)
 - Separating core components:
   - Game logic
   - Rendering pipeline
